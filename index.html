@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Premium Proforma Invoice</title>
+
+  <link rel="icon" type="image/png" href="pfavicon.png">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <div id="authScreen" class="auth-screen">
+  <div class="auth-box">
+    <h2>Proforma Invoice</h2>
+    <p>Devam etmek için giriş yapın veya kayıt olun.</p>
+
+    <input type="email" id="authEmail" placeholder="E-posta adresi">
+    <input type="password" id="authPassword" placeholder="Şifre">
+
+    <button id="loginBtn">Giriş Yap</button>
+    <button id="registerBtn" type="button">Kayıt Ol</button>
+
+    <button id="resetBtn" type="button">
+  Şifremi Unuttum
+</button>
+
+    <span id="authMessage"></span>
+  </div>
+</div>
+
+
+  <main class="app" id="appContent" style="display:none;">
+    <button id="accountBtn" class="account-btn">
+  👤 Hesabım
+</button>
+<div id="accountPanel" class="account-panel">
+
+  <h3>Hesap Bilgileri</h3>
+
+  <p id="panelEmail">-</p>
+
+  <div class="license-badge">
+    🟢 Lisans Aktif
+  </div>
+
+  <button id="logoutBtn">
+    Çıkış Yap
+  </button>
+
+</div>
+
+    <div id="userBar" class="user-bar" style="display:none;">
+
+  <div>
+    <strong id="userEmail">Kullanıcı</strong>
+    <span id="licenseStatus">Lisans: Aktif</span>
+  </div>
+
+  <button id="logoutBtn">
+    Çıkış Yap
+  </button>
+
+</div>
+    
+
+    <!-- =========================================
+         SOL PANEL
+    ========================================= -->
+
+    <aside class="control-panel">
+
+      <div class="panel-header">
+        <h1>Proforma Paneli</h1>
+        <p>
+          Bilgileri gir, profesyonel A4 önizlemeyi canlı oluştur.
+        </p>
+      </div>
+
+      <!-- =========================================
+           GENEL
+      ========================================= -->
+
+      <section class="panel-section">
+
+        <h2>Genel Bilgiler</h2>
+
+        <label>
+          Logo Yükle
+          <input
+            type="file"
+            id="logoInput"
+            accept="image/*"
+          />
+        </label>
+
+        <label>
+          Proforma No
+          <input
+            type="text"
+            id="invoiceNo"
+            placeholder="PRF-2026-001"
+          />
+        </label>
+
+        <div class="mini-grid">
+
+          <label>
+            Tarih
+            <input
+              type="date"
+              id="invoiceDate"
+            />
+          </label>
+
+          <label>
+            Geçerlilik
+            <input
+              type="date"
+              id="validUntil"
+            />
+          </label>
+
+        </div>
+
+        <label>
+          Para Birimi
+
+          <select id="currency">
+
+            <option value="₺">
+              TRY - ₺
+            </option>
+
+            <option value="$">
+              USD - $
+            </option>
+
+            <option value="€">
+              EUR - €
+            </option>
+
+          </select>
+
+        </label>
+
+      </section>
+
+      <!-- =========================================
+           SATICI
+      ========================================= -->
+
+      <section class="panel-section">
+
+        <h2>Satıcı Bilgileri</h2>
+
+        <textarea
+          id="sellerInfo"
+          rows="7"
+          placeholder="Firma adı&#10;Adres&#10;Telefon&#10;E-posta&#10;Vergi Dairesi / No"
+        ></textarea>
+
+      </section>
+
+      <!-- =========================================
+           ALICI
+      ========================================= -->
+
+      <section class="panel-section">
+
+        <h2>Alıcı Bilgileri</h2>
+
+        <textarea
+          id="buyerInfo"
+          rows="7"
+          placeholder="Firma / Kişi adı&#10;Adres&#10;Telefon&#10;E-posta&#10;Vergi Bilgisi"
+        ></textarea>
+
+      </section>
+
+      <!-- =========================================
+           ÜRÜNLER
+      ========================================= -->
+
+      <section class="panel-section">
+
+        <div class="section-title-row">
+
+          <h2>Ürünler</h2>
+
+          <button
+            type="button"
+            id="addProductBtn"
+          >
+            Ürün Ekle
+          </button>
+
+        </div>
+
+        <div
+          id="productFormList"
+          class="dynamic-list"
+        ></div>
+
+      </section>
+
+      <!-- =========================================
+           EKSTRA GİDER
+      ========================================= -->
+
+      <section class="panel-section">
+
+        <div class="section-title-row">
+
+          <h2>Ekstra Giderler</h2>
+
+          <button
+            type="button"
+            id="addExpenseBtn"
+          >
+            Gider Ekle
+          </button>
+
+        </div>
+
+        <div
+          id="expenseFormList"
+          class="dynamic-list"
+        ></div>
+
+      </section>
+
+      <!-- =========================================
+           KDV
+      ========================================= -->
+
+      <section class="panel-section">
+
+        <h2>KDV</h2>
+
+        <label class="checkbox-label">
+
+          <input
+            type="checkbox"
+            id="vatEnabled"
+          />
+
+          KDV Uygula
+
+        </label>
+
+        <label>
+
+          KDV Oranı
+
+          <select id="vatRate">
+
+            <option value="20">
+              %20
+            </option>
+
+            <option value="10">
+              %10
+            </option>
+
+            <option value="1">
+              %1
+            </option>
+
+          </select>
+
+        </label>
+
+      </section>
+
+      <section class="panel-section">
+
+  <h2>İskonto</h2>
+
+  <label>
+    İskonto Türü
+
+    <select id="discountType">
+      <option value="none">İskonto Yok</option>
+      <option value="percent">Yüzde (%)</option>
+      <option value="fixed">Sabit Tutar</option>
+    </select>
+  </label>
+
+  <label>
+    İskonto Değeri
+
+    <input
+      type="number"
+      id="discountValue"
+      min="0"
+      step="0.01"
+      placeholder="0"
+    />
+  </label>
+
+</section>
+
+      <!-- =========================================
+           KAPARO
+      ========================================= -->
+
+      <section class="panel-section">
+
+        <h2>Kaparo</h2>
+
+        <label class="checkbox-label">
+
+          <input
+            type="checkbox"
+            id="depositEnabled"
+          />
+
+          Kaparo Alındı
+
+        </label>
+
+        <label>
+
+          Kaparo Tutarı
+
+          <input
+            type="number"
+            id="depositAmount"
+            placeholder="0"
+          />
+
+        </label>
+
+      </section>
+
+      <!-- =========================================
+           NOT
+      ========================================= -->
+
+      <section class="panel-section">
+
+        <h2>Not Alanı</h2>
+
+        <textarea
+          id="invoiceNote"
+          rows="5"
+          placeholder="Teslimat, özel şartlar veya kısa not..."
+        ></textarea>
+
+      </section>
+
+      <!-- =========================================
+           GENEL BİLGİ
+      ========================================= -->
+
+      <section class="panel-section">
+
+        <h2>Genel Bilgilendirme</h2>
+
+        <textarea
+          id="generalInfo"
+          rows="10"
+          placeholder="Genel bilgilendirme maddeleri..."
+        ></textarea>
+
+      </section>
+
+      <!-- =========================================
+           BANKA BİLGİLERİ
+      ========================================= -->
+
+<label class="checkbox-label">
+  <input type="checkbox" id="showBankInfo" checked>
+  Banka Bilgilerini Göster
+</label>
+
+      <section class="panel-section">
+
+        <h2>Banka Bilgileri</h2>
+
+        <div class="mini-grid">
+
+          <label>
+            Banka Adı
+
+            <input
+              type="text"
+              id="bankName"
+              placeholder="Vakıfbank"
+            />
+
+          </label>
+
+          <label>
+            Hesap Adı
+
+            <input
+              type="text"
+              id="bankHolder"
+              placeholder="Firma Adı"
+            />
+
+          </label>
+
+        </div>
+
+        <label>
+
+          Şube Adı
+
+          <input
+            type="text"
+            id="bankBranch"
+            placeholder="Merter Şubesi"
+          />
+
+        </label>
+
+        <div class="mini-grid">
+
+          <label>
+
+            Swift Kodu
+
+            <input
+              type="text"
+              id="bankSwift"
+              placeholder="TVBATR2AXXX"
+            />
+
+          </label>
+
+          <label>
+
+            Hesap No
+
+            <input
+              type="text"
+              id="bankAccountNo"
+              placeholder="123456789"
+            />
+
+          </label>
+
+        </div>
+
+        <label>
+
+          IBAN (₺)
+
+          <input
+            type="text"
+            id="bankIban1"
+            placeholder="TR00 0000 0000 0000"
+          />
+
+        </label>
+
+        <label>
+
+          IBAN ($)
+
+          <input
+            type="text"
+            id="bankIban2"
+            placeholder="TR00 0000 0000 0000"
+          />
+
+        </label>
+
+        <label>
+
+          IBAN (€)
+
+          <input
+            type="text"
+            id="bankIban3"
+            placeholder="TR00 0000 0000 0000"
+          />
+
+        </label>
+
+        
+
+      </section>
+<section class="panel-section">
+
+  <section class="panel-section">
+
+  <h2>Teklif Hazırlayan</h2>
+
+  <label>
+
+    Ad Soyad
+
+    <input
+      type="text"
+      id="preparedBy"
+      placeholder="Ad Soyad"
+    />
+
+  </label>
+
+</section>
+
+  <h2>Firma Bilgileri</h2>
+
+  <label>
+
+    Web Sitesi
+
+    <input
+      type="text"
+      id="website"
+      placeholder="www.orneksite.com"
+    />
+
+  </label>
+
+</section>
+      <!-- =========================================
+           ACTIONS
+      ========================================= -->
+
+      <section class="panel-actions">
+
+        <button
+          type="button"
+          id="downloadPdfBtn"
+          class="primary-btn"
+        >
+          PDF Çıktı Al
+        </button>
+
+        <button
+          type="button"
+          id="clearStorageBtn"
+          class="secondary-btn"
+        >
+          Temizle
+        </button>
+
+      </section>
+
+    </aside>
+
+
+    
+    <!-- =========================================
+         SAĞ ÖNİZLEME
+    ========================================= -->
+
+    <section class="preview-area">
+
+      <div class="preview-topbar">
+
+        <div>
+
+          <strong>
+            A4 Önizleme
+          </strong>
+
+          <span>
+            Girdiğin bilgiler burada canlı görünür.
+          </span>
+
+        </div>
+
+        <button
+          type="button"
+          id="downloadPdfBtnTop"
+          class="primary-btn small-btn"
+        >
+          PDF Çıktı Al
+        </button>
+
+      </div>
+
+      <!-- =========================================
+           SAYFA ALANI
+      ========================================= -->
+
+      <div
+        id="invoicePreview"
+        class="invoice-preview"
+      ></div>
+
+    </section>
+
+  </main>
+
+  <!-- =========================================
+       PRODUCT TEMPLATE
+  ========================================= -->
+
+  <template id="productFormTemplate">
+
+    <div class="form-card product-form-card">
+
+      <div class="form-card-header">
+
+        <strong>
+          Ürün
+        </strong>
+
+        <button
+          type="button"
+          class="remove-product-btn"
+        >
+          Sil
+        </button>
+
+      </div>
+
+      <label>
+
+        Ürün Görseli
+
+        <input
+          type="file"
+          class="product-image-input"
+          accept="image/*"
+        />
+
+      </label>
+
+      <label>
+
+        Ürün Adı
+
+        <input
+          type="text"
+          class="product-name-input"
+          placeholder="Ürün adı"
+        />
+
+      </label>
+
+      <label>
+
+        Ürün Açıklaması
+
+        <textarea
+          class="product-desc-input"
+          rows="3"
+          placeholder="Kısa ürün açıklaması"
+        ></textarea>
+
+      </label>
+
+      <div class="mini-grid">
+
+  <label>
+
+    Marka
+
+    <input
+      type="text"
+      class="product-brand-input"
+      placeholder="Marka adı"
+    />
+
+  </label>
+
+  <label>
+
+    Menşei
+
+    <input
+      type="text"
+      class="product-origin-input"
+      placeholder="Türkiye"
+    />
+
+  </label>
+
+</div>
+
+      <div class="mini-grid">
+
+        <label>
+
+          Miktar
+
+          <input
+            type="number"
+            class="product-qty-input"
+            min="1"
+            value="1"
+          />
+
+        </label>
+
+        <label>
+
+          Birim Fiyat
+
+          <input
+            type="number"
+            class="product-price-input"
+            min="0"
+            step="0.01"
+            placeholder="0.00"
+          />
+
+        </label>
+
+      </div>
+
+    </div>
+
+  </template>
+
+  <!-- =========================================
+       EXPENSE TEMPLATE
+  ========================================= -->
+
+  <template id="expenseFormTemplate">
+
+    <div class="form-card expense-form-card">
+
+      <div class="form-card-header">
+
+        <strong>
+          Ekstra Gider
+        </strong>
+
+        <button
+          type="button"
+          class="remove-expense-btn"
+        >
+          Sil
+        </button>
+
+      </div>
+
+      <label>
+
+        Gider Adı
+
+        <input
+          type="text"
+          class="expense-name-input"
+          placeholder="Kargo / Nakliyat"
+        />
+
+      </label>
+
+      <label>
+
+        Tutar
+
+        <input
+          type="number"
+          class="expense-price-input"
+          min="0"
+          step="0.01"
+          placeholder="0.00"
+        />
+
+      </label>
+
+    </div>
+
+  </template>
+
+  <!-- =========================================
+       LIBS
+  ========================================= -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <script src="script.js"></script>
+  <script type="module" src="firebase.js"></script>
+
+
+</body>
+
+</html>
